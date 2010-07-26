@@ -19,15 +19,22 @@
 #include <blockdev.h>
 #include "testdefs.h"
 
+int bd_initialized;
+static int cardinit()
+{
+	if(!bd_init(BLOCKDEV_MEMORY_CARD))
+		return TEST_STATUS_FAILED;
+	bd_initialized = 1;
+	return TEST_STATUS_PASSED;
+}
+
 static int blkread()
 {
 	unsigned char buffer[512];
 	unsigned short eos;
-	
-	if(!bd_init(BLOCKDEV_MEMORY_CARD)) {
-		printf("Cannot intialize memory card\n");
+
+	if(!bd_initialized)
 		return TEST_STATUS_FAILED;
-	}
 	if(!bd_readblock(0, buffer)) {
 		printf("Cannot read block\n");
 		return TEST_STATUS_FAILED;
@@ -42,6 +49,10 @@ static int blkread()
 }
 
 struct test_description tests_memorycard[] = {
+	{
+		.name = "Card initialization",
+		.run = cardinit
+	},
 	{
 		.name = "Block read",
 		.run = blkread
