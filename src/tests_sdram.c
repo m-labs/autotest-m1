@@ -15,17 +15,59 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <system.h>
 #include <stdio.h>
 #include "testdefs.h"
 
+#define TEST_WORDS (1024*1024)
+
 static int random()
 {
-	return TEST_STATUS_NOT_DONE;
+	unsigned int test_buffer[TEST_WORDS];
+	int i;
+	unsigned int r;
+
+	r = 0;
+	for(i=0;i<TEST_WORDS;i++) {
+		test_buffer[i] = r;
+		r = 1664525*r + 1013904223;
+	}
+	flush_bridge_cache();
+	r = 0;
+	for(i=0;i<TEST_WORDS;i++) {
+		if(test_buffer[i] != r)
+			return TEST_STATUS_FAILED;
+		r = 1664525*r + 1013904223;
+	}
+	return TEST_STATUS_PASSED;
 }
 
 static int hammer()
 {
-	return TEST_STATUS_NOT_DONE;
+	unsigned int test_buffer[TEST_WORDS];
+	int i;
+
+	for(i=0;i<TEST_WORDS;i++)
+		test_buffer[i] = i & 1 ? 0xffffffff : 0x00000000;
+	flush_bridge_cache();
+	for(i=0;i<TEST_WORDS;i++)
+		if(test_buffer[i] != (i & 1 ? 0xffffffff : 0x00000000))
+			return TEST_STATUS_FAILED;
+	return TEST_STATUS_PASSED;
+}
+
+static int crosstalk()
+{
+	unsigned int test_buffer[TEST_WORDS];
+	int i;
+
+	for(i=0;i<TEST_WORDS;i++)
+		test_buffer[i] = i & 1 ? 0xaaaaaaaa : 0x55555555;
+	flush_bridge_cache();
+	for(i=0;i<TEST_WORDS;i++)
+		if(test_buffer[i] != (i & 1 ? 0xaaaaaaaa : 0x55555555))
+			return TEST_STATUS_FAILED;
+	return TEST_STATUS_PASSED;
 }
 
 struct test_description tests_sdram[] = {
@@ -36,6 +78,10 @@ struct test_description tests_sdram[] = {
 	{
 		.name = "Hammer pattern",
 		.run = hammer
+	},
+	{
+		.name = "Crosstalk pattern",
+		.run = crosstalk
 	},
 	{
 		.name = NULL

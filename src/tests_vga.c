@@ -23,7 +23,7 @@ static int ddc()
 	return TEST_STATUS_FAILED; // FIXME
 }
 
-static int pattern()
+static int testcard()
 {
 	return TEST_STATUS_PASSED; // FIXME
 }
@@ -34,8 +34,8 @@ struct test_description tests_vga[] = {
 		.run = ddc
 	},
 	{
-		.name = "Pattern",
-		.run = pattern
+		.name = "Test card",
+		.run = testcard
 	},
 	{
 		.name = NULL
