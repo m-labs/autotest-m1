@@ -23,17 +23,26 @@
 
 static int generic_sw(unsigned int b)
 {
+	char c;
+	
+	printf("Press the button. f to fail test, s to skip.\n");
 	if(CSR_GPIO_IN & b) return TEST_STATUS_FAILED;
 	while(!(CSR_GPIO_IN & b)) {
 		if(readchar_nonblock()) {
-			if(readchar() == 'Q')
+			c = readchar();
+			if(c == 'f')
 				return TEST_STATUS_FAILED;
+			if(c == 's')
+				return TEST_STATUS_NOT_DONE;
 		}
 	}
 	while((CSR_GPIO_IN & b)) {
 		if(readchar_nonblock()) {
-			if(readchar() == 'Q')
+			c = readchar();
+			if(c == 'f')
 				return TEST_STATUS_FAILED;
+			if(c == 's')
+				return TEST_STATUS_NOT_DONE;
 		}
 	}
 	return TEST_STATUS_PASSED;
@@ -43,7 +52,7 @@ static int generic_led(unsigned int l)
 {
 	char c;
 	CSR_GPIO_OUT = l;
-	printf("Is the LED on? (y/n)\n");
+	printf("Is the LED on? (y/n/s)\n");
 	while(1) {
 		c = readchar();
 		switch(c) {
@@ -53,6 +62,9 @@ static int generic_led(unsigned int l)
 			case 'n':
 				CSR_GPIO_OUT = 0;
 				return TEST_STATUS_FAILED;
+			case 's':
+				CSR_GPIO_OUT = 0;
+				return TEST_STATUS_NOT_DONE;
 		}
 	}
 }

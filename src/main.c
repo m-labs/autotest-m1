@@ -100,7 +100,7 @@ static void print_test_status(int status)
 	printf("\x1b\x5b\x41\x1b\x5b\x37\x34\x47\x5b\x20");
 	switch(status) {
 		case TEST_STATUS_NOT_DONE:
-			printf("  SKIP  ");
+			printf(" SKIPPED ");
 			break;
 		case TEST_STATUS_FAILED:
 			printf("\x1b\x5b\x33\x31\x6d FAILED ");
