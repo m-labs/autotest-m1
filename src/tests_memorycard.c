@@ -16,17 +16,35 @@
  */
 
 #include <stdio.h>
+#include <blockdev.h>
 #include "testdefs.h"
 
-static int secread()
+static int blkread()
 {
-	return TEST_STATUS_NOT_DONE;
+	unsigned char buffer[512];
+	unsigned short eos;
+	
+	if(!bd_init(BLOCKDEV_MEMORY_CARD)) {
+		printf("Cannot intialize memory card\n");
+		return TEST_STATUS_FAILED;
+	}
+	if(!bd_readblock(0, buffer)) {
+		printf("Cannot read block\n");
+		return TEST_STATUS_FAILED;
+	}
+	bd_done();
+	eos = (((unsigned short)buffer[510]) << 8)|buffer[511];
+	if(eos != 0x55aa) {
+		printf("Unexpected end of block (%04x)\n", eos);
+		return TEST_STATUS_FAILED;
+	}
+	return TEST_STATUS_PASSED;
 }
 
 struct test_description tests_memorycard[] = {
 	{
-		.name = "Sector read",
-		.run = secread
+		.name = "Block read",
+		.run = blkread
 	},
 	{
 		.name = NULL
