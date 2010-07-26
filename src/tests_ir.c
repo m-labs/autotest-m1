@@ -16,11 +16,33 @@
  */
 
 #include <stdio.h>
+#include <irq.h>
+#include <uart.h>
+#include <hw/rc5.h>
+#include <hw/interrupts.h>
 #include "testdefs.h"
 
 static int reception()
 {
-	return TEST_STATUS_NOT_DONE;
+	char c;
+	int rx;
+
+	printf("Waiting for remote. f to fail test, s to skip.\n");
+	while(1) {
+		while(!(irq_pending() & IRQ_IR)) {
+			if(readchar_nonblock()) {
+				c = readchar();
+				if(c == 'f')
+					return TEST_STATUS_FAILED;
+				if(c == 's')
+					return TEST_STATUS_NOT_DONE;
+			}
+		}
+		rx = CSR_RC5_RX;
+		irq_ack(IRQ_IR);
+		if((rx & 0x003f) == 12)
+			return TEST_STATUS_PASSED;
+	}
 }
 
 struct test_description tests_ir[] = {
