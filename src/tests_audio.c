@@ -164,7 +164,7 @@ struct test_description tests_audio[] = {
 		.run = codecprobe
 	},
 	{
-		.name = "Line output",
+		.name = "Line and headphones outputs",
 		.run = lineout
 	},
 	{
