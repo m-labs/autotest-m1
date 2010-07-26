@@ -16,31 +16,70 @@
  */
 
 #include <stdio.h>
+#include <uart.h>
+#include <hw/sysctl.h>
+#include <hw/gpio.h>
 #include "testdefs.h"
+
+static int generic_sw(unsigned int b)
+{
+	if(CSR_GPIO_IN & b) return TEST_STATUS_FAILED;
+	while(!(CSR_GPIO_IN & b)) {
+		if(readchar_nonblock()) {
+			if(readchar() == 'Q')
+				return TEST_STATUS_FAILED;
+		}
+	}
+	while((CSR_GPIO_IN & b)) {
+		if(readchar_nonblock()) {
+			if(readchar() == 'Q')
+				return TEST_STATUS_FAILED;
+		}
+	}
+	return TEST_STATUS_PASSED;
+}
+
+static int generic_led(unsigned int l)
+{
+	char c;
+	CSR_GPIO_OUT = l;
+	printf("Is the LED on? (y/n)\n");
+	while(1) {
+		c = readchar();
+		switch(c) {
+			case 'y':
+				CSR_GPIO_OUT = 0;
+				return TEST_STATUS_PASSED;
+			case 'n':
+				CSR_GPIO_OUT = 0;
+				return TEST_STATUS_FAILED;
+		}
+	}
+}
 
 static int sw1()
 {
-	return TEST_STATUS_NOT_DONE;
+	return generic_sw(GPIO_BTN1);
 }
 
 static int sw2()
 {
-	return TEST_STATUS_NOT_DONE;
+	return generic_sw(GPIO_BTN2);
 }
 
 static int sw3()
 {
-	return TEST_STATUS_NOT_DONE;
+	return generic_sw(GPIO_BTN3);
 }
 
 static int led2()
 {
-	return TEST_STATUS_NOT_DONE;
+	return generic_led(GPIO_LED1);
 }
 
 static int led3()
 {
-	return TEST_STATUS_NOT_DONE;
+	return generic_led(GPIO_LED2);
 }
 
 struct test_description tests_gpio[] = {
