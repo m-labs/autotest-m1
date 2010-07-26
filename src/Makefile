@@ -12,7 +12,7 @@ all: boot.bin
 	$(MMDIR)/tools/crc32 $@
 
 boot.elf: linker.ld $(OBJECTS)
-	$(LD) $(LDFLAGS) -T linker.ld -N -o $@ -L$(MMDIR)/software/libbase --start-group $(OBJECTS) -lbase --end-group
+	$(LD) $(LDFLAGS) -T linker.ld -N -o $@ -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath --start-group $(OBJECTS) -lbase -lmath --end-group
 	chmod -x $@
 
 load: boot.bin
