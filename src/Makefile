@@ -1,6 +1,6 @@
 include $(MMDIR)/software/include.mak
 
-OBJECTS=crt0.o main.o
+OBJECTS=crt0.o main.o tests_sdram.o tests_gpio.o tests_vga.o tests_memorycard.o tests_audio.o tests_ethernet.o tests_videoin.o tests_midi.o tests_dmx.o tests_ir.o tests_usb.o
 SEGMENTS=-j .text -j .data -j .rodata
 
 all: boot.bin

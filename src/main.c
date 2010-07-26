@@ -33,25 +33,62 @@ void isr()
 		uart_async_isr_tx();
 }
 
-int tf1()
-{
-	return TEST_STATUS_PASSED;
-}
-
-struct test_description tests[] = {
-	{
-		.name = "Toto a l'ecole",
-		.run = tf1
-	},
-	{
-		.name = NULL
-	}
-};
+extern struct test_description tests_sdram[];
+extern struct test_description tests_gpio[];
+extern struct test_description tests_vga[];
+extern struct test_description tests_memorycard[];
+extern struct test_description tests_audio[];
+extern struct test_description tests_ethernet[];
+extern struct test_description tests_videoin[];
+extern struct test_description tests_midi[];
+extern struct test_description tests_dmx[];
+extern struct test_description tests_ir[];
+extern struct test_description tests_usb[];
 
 struct test_category categories[] = {
 	{
-		.name = "Category 1",
-		.tests = tests
+		.name = "SDRAM",
+		.tests = tests_sdram
+	},
+	{
+		.name = "GPIO",
+		.tests = tests_gpio
+	},
+	{
+		.name = "VGA",
+		.tests = tests_vga
+	},
+	{
+		.name = "Memory card",
+		.tests = tests_memorycard
+	},
+	{
+		.name = "Audio",
+		.tests = tests_audio
+	},
+	{
+		.name = "Ethernet",
+		.tests = tests_ethernet
+	},
+	{
+		.name = "Video input",
+		.tests = tests_videoin
+	},
+	{
+		.name = "MIDI",
+		.tests = tests_midi
+	},
+	{
+		.name = "DMX512",
+		.tests = tests_dmx
+	},
+	{
+		.name = "Infrared",
+		.tests = tests_ir
+	},
+	{
+		.name = "USB",
+		.tests = tests_usb
 	},
 	{
 		.name = NULL
