@@ -16,11 +16,27 @@
  */
 
 #include <stdio.h>
+#include <irq.h>
+#include <hw/midi.h>
+#include <hw/interrupts.h>
 #include "testdefs.h"
 
 static int loopback()
 {
-	return TEST_STATUS_NOT_DONE;
+	unsigned int c;
+
+	irq_ack(IRQ_MIDITX|IRQ_MIDIRX);
+	for(c=0;c<256;c++) {
+		CSR_MIDI_RXTX = c;
+		while(!(irq_pending() & IRQ_MIDITX));
+		irq_ack(IRQ_MIDITX);
+		
+		if(!(irq_pending() & IRQ_MIDIRX)) return TEST_STATUS_FAILED;
+		if(CSR_MIDI_RXTX != c) return TEST_STATUS_FAILED;
+		irq_ack(IRQ_MIDIRX);
+	}
+	
+	return TEST_STATUS_PASSED;
 }
 
 struct test_description tests_midi[] = {
