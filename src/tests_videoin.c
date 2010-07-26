@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include "testdefs.h"
 
-static int i2c()
+static int decoder_probe()
 {
 	return TEST_STATUS_NOT_DONE;
 }
@@ -30,8 +30,8 @@ static int capture()
 
 struct test_description tests_videoin[] = {
 	{
-		.name = "I2C link",
-		.run = i2c
+		.name = "Decoder probe",
+		.run = decoder_probe
 	},
 	{
 		.name = "Capture",
