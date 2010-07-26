@@ -18,15 +18,43 @@
 #include <stdio.h>
 #include "testdefs.h"
 
-static int tbd()
+static int fs_a()
 {
 	return TEST_STATUS_NOT_DONE;
 }
 
+static int fs_b()
+{
+	return TEST_STATUS_NOT_DONE;
+}
+
+static int ls_a()
+{
+	return TEST_STATUS_NOT_DONE;
+}
+
+static int ls_b()
+{
+	return TEST_STATUS_NOT_DONE;
+}
+
+
 struct test_description tests_usb[] = {
 	{
-		.name = "(to be determined)",
-		.run = tbd
+		.name = "Full speed device enumeration (port A)",
+		.run = fs_a
+	},
+	{
+		.name = "Full speed device enumeration (port B)",
+		.run = fs_b
+	},
+	{
+		.name = "Low speed device enumeration (port A)",
+		.run = ls_a
+	},
+	{
+		.name = "Low speed device enumeration (port B)",
+		.run = ls_b
 	},
 	{
 		.name = NULL
