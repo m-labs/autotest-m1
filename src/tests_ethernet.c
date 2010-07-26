@@ -16,16 +16,32 @@
  */
 
 #include <stdio.h>
+#include <net/mdio.h>
+#include <net/microudp.h>
 #include "testdefs.h"
 
 static int mdio()
 {
-	return TEST_STATUS_NOT_DONE;
+	int r;
+	r = mdio_read(0x01, 0x02);
+	if(r == 0x0022)
+		return TEST_STATUS_PASSED;
+	else {
+		printf("Unexpected PHY ID: %04x\n", r);
+		return TEST_STATUS_FAILED;
+	}
 }
 
+static char macaddr[6] = {0xf8, 0x71, 0xfe, 0x01, 0x02, 0x03};
 static int arp_resolution()
 {
-	return TEST_STATUS_NOT_DONE;
+	int ethbuf[MICROUDP_BUFSIZE/4];
+	
+	microudp_start(macaddr, IPTOINT(192, 168, 0, 42), ethbuf);
+	if(!microudp_arp_resolve(IPTOINT(192, 168, 0, 14)))
+		return TEST_STATUS_FAILED;
+	microudp_shutdown();
+	return TEST_STATUS_PASSED;
 }
 
 struct test_description tests_ethernet[] = {
