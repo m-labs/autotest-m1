@@ -18,6 +18,8 @@ all: $(PDF)
 
 %.dvi: %.tex
 	latex $<
+	latex $<
+	latex $<
 
 %.ps: %.dvi
 	dvips $<
