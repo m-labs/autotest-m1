@@ -14,7 +14,7 @@
 
 \title{Milkymist\texttrademark~ One testing procedure}
 \author{S\'ebastien Bourdeauducq}
-\date{July 2010}
+\date{August 2010}
 \begin{document}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{5pt}
@@ -83,6 +83,11 @@ The board will automatically download and run the program from \verb!flterm! dur
 
 \section{Description of the tests}
 \subsection{SDRAM}
+\subsubsection{Address (A*) tests}
+Those tests verify the connectivity of the SDRAM address lines by writing a word at one address, toggling the tested address line, and then writing a different word. The two words are then read back and verified.
+
+The tests operate on the column address lines A8 to A12. The bank address lines and A0-A7 have already been tested by the 4MB test performed by the BIOS.
+
 \subsubsection{Random pattern}
 This test fills a memory buffer with pseudo-random data, reads it back and check that the data was not changed.
 
