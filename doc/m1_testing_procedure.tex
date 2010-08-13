@@ -38,7 +38,7 @@ For successfully running all the tests, the following hardware set-up is needed:
 \item The board must be on an Ethernet network with a computer responding to the IP address \verb!192.168.0.14!.
 \item A video source must be connected to the board's video input connector. (TODO)
 \item The MIDI ports must be connected together (loopback) with a standard MIDI cable, preferably of the maximum length specified by the standard (15m).
-\item The DMX ports must be connected together (loopback). (TODO)
+\item The DMX ports must be connected together (loopback).
 \item A RC5 remote control must be available to trigger the infrared sensor.
 \item Full speed and low speed USB devices must be available to test the host controller. (TODO)
 \end{enumerate}
@@ -159,7 +159,7 @@ TODO
 The test sends the 256 possible values of the bytes used in the MIDI protocol, and check that they are correctly received back. The MIDI input and output connectors of the board must be connected together for this test.
 
 \subsection{DMX512}
-TODO
+The test sets the 512 DMX channels of the transmitter to a pre-defined pattern, and check that the channel values are correctly received back by the receiver. The DMX input and output connectors of the board must be connected together for this test.
 
 \subsection{Infrared}
 The test waits for a "power off" RC5 code to be received. The device identification bits of the RC5 codes are ignored, so most RC5 remote controls can be used to perform the test. If the IR sensor does not respond, the command \verb!f! can be typed to mark the test as failed. If the IR test is not desired, it can be skipped with the command \verb!s!.
