@@ -16,11 +16,30 @@
  */
 
 #include <stdio.h>
+#include <hw/dmx.h>
+#include <hw/sysctl.h>
 #include "testdefs.h"
 
 static int loopback()
 {
-	return TEST_STATUS_NOT_DONE;
+	unsigned int i;
+	
+	for(i=0;i<512;i++)
+		CSR_DMX_TX(i) = i;
+	CSR_DMX_THRU = 0;
+	
+	/* wait for all channels to be transmitted */
+	CSR_TIMER0_COUNTER = 0;
+	CSR_TIMER0_COMPARE = 0xffffffff;
+	CSR_TIMER0_CONTROL = TIMER_ENABLE;
+	while(CSR_TIMER0_COUNTER < 3787878);
+	CSR_TIMER0_CONTROL = 0;
+	
+	for(i=0;i<512;i++)
+		if(CSR_DMX_RX(i) != (i & 0xff))
+			return TEST_STATUS_FAILED;
+	
+	return TEST_STATUS_PASSED;
 }
 
 struct test_description tests_dmx[] = {
