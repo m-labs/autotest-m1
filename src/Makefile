@@ -9,7 +9,7 @@ all: boot.bin
 	$(MAKE) -C $(MMDIR)/tools
 	$(OBJCOPY) $(SEGMENTS) -O binary $< $@
 	chmod -x $@
-	$(MMDIR)/tools/crc32 $@
+	$(MMDIR)/tools/mkmmimg $@
 
 boot.elf: linker.ld $(OBJECTS)
 	$(LD) $(LDFLAGS) -T linker.ld -N -o $@ -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet --start-group $(OBJECTS) -lbase -lmath -lnet --end-group

@@ -28,9 +28,9 @@ void isr()
 	irqs = irq_pending() & irq_getmask();
 
 	if(irqs & IRQ_UARTRX)
-		uart_async_isr_rx();
+		uart_isr_rx();
 	if(irqs & IRQ_UARTTX)
-		uart_async_isr_tx();
+		uart_isr_tx();
 }
 
 extern struct test_description tests_sdram[];
@@ -181,7 +181,7 @@ int main()
 {
 	irq_setmask(0);
 	irq_enable(1);
-	uart_async_init();
+	uart_init();
 	printf("*** Milkymist One automated tests starting...\n\n");
 	run_all_tests(categories);
 	printf("******** TEST SUMMARY ********\n");

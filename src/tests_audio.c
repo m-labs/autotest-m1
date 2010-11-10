@@ -20,7 +20,7 @@
 #include <irq.h>
 #include <stdio.h>
 #include <math.h>
-#include <uart.h>
+#include <console.h>
 #include "testdefs.h"
 
 static unsigned int snd_ac97_read(unsigned int addr)

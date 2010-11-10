@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 #include <irq.h>
-#include <uart.h>
+#include <console.h>
 #include <hw/rc5.h>
 #include <hw/interrupts.h>
 #include "testdefs.h"

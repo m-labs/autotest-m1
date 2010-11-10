@@ -16,7 +16,7 @@
  */
 
 #include <stdio.h>
-#include <uart.h>
+#include <console.h>
 #include <hw/sysctl.h>
 #include <hw/gpio.h>
 #include "testdefs.h"

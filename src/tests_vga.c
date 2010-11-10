@@ -16,7 +16,7 @@
  */
 
 #include <stdio.h>
-#include <uart.h>
+#include <console.h>
 #include <hw/vga.h>
 #include "testdefs.h"
 
