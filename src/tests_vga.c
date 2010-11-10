@@ -216,10 +216,13 @@ static int testcard()
 		c = readchar();
 		switch(c) {
 			case 'y':
+				CSR_VGA_RESET = 1;
 				return TEST_STATUS_PASSED;
 			case 'n':
+				CSR_VGA_RESET = 1;
 				return TEST_STATUS_FAILED;
 			case 's':
+				CSR_VGA_RESET = 1;
 				return TEST_STATUS_NOT_DONE;
 		}
 	}
