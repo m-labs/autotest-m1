@@ -38,7 +38,7 @@ static int decoder_probe()
 }
 
 /* Must be run after the VGA test to initialize the frambuffer! */
-short int fb[640*480] __attribute__((aligned(32)));
+static short int fb[640*480] __attribute__((aligned(32)));
 static short vbuffer[720*288] __attribute__((aligned(32)));
 static int capture()
 {
