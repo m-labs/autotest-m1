@@ -48,6 +48,11 @@ static int capture()
 	CSR_VGA_BASEADDRESS = (unsigned int)fb;
 	CSR_VGA_RESET = 0;
 
+	for(x=0;x<640*480;x++)
+		fb[x] = 0;
+	for(x=0;x<720*288;x++)
+		vbuffer[x] = 0;
+	
 	printf("Waiting for a captured frame. f to fail test, s to skip.\n");
 	
 	irq_ack(IRQ_VIDEOIN);
