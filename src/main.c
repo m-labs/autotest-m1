@@ -16,6 +16,7 @@
  */
 
 #include <hw/interrupts.h>
+#include <hal/usb.h>
 #include <irq.h>
 #include <uart.h>
 #include <stdio.h>
@@ -31,6 +32,9 @@ void isr()
 		uart_isr_rx();
 	if(irqs & IRQ_UARTTX)
 		uart_isr_tx();
+
+	if(irqs & IRQ_USB)
+		usb_isr();
 }
 
 extern struct test_description tests_sdram[];

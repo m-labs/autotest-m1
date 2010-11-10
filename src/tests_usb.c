@@ -16,45 +16,51 @@
  */
 
 #include <stdio.h>
+#include <hal/usb.h>
+#include <console.h>
 #include "testdefs.h"
 
-static int fs_a()
+static int initialized;
+static volatile int success;
+
+static void keyboard_cb(unsigned char modifiers, unsigned char key)
 {
-	return TEST_STATUS_NOT_DONE;
+	if(key == 0x28)
+		success = 1;
 }
 
-static int fs_b()
+static int test_keyboard()
 {
-	return TEST_STATUS_NOT_DONE;
+	char c;
+	
+	if(!initialized) {
+		usb_init();
+		initialized = 1;
+	}
+	printf("Press ENTER at the USB keyboard...\n");
+	success = 0;
+	usb_set_keyboard_cb(keyboard_cb);
+	while(!success) {
+		if(readchar_nonblock()) {
+			c = readchar();
+			if(c == 'f')
+				return TEST_STATUS_FAILED;
+			if(c == 's')
+				return TEST_STATUS_NOT_DONE;
+		}
+	}
+	usb_set_keyboard_cb(NULL);
+	return TEST_STATUS_PASSED;
 }
-
-static int ls_a()
-{
-	return TEST_STATUS_NOT_DONE;
-}
-
-static int ls_b()
-{
-	return TEST_STATUS_NOT_DONE;
-}
-
 
 struct test_description tests_usb[] = {
 	{
-		.name = "Full speed device enumeration (port A)",
-		.run = fs_a
+		.name = "Port A",
+		.run = test_keyboard
 	},
 	{
-		.name = "Full speed device enumeration (port B)",
-		.run = fs_b
-	},
-	{
-		.name = "Low speed device enumeration (port A)",
-		.run = ls_a
-	},
-	{
-		.name = "Low speed device enumeration (port B)",
-		.run = ls_b
+		.name = "Port B",
+		.run = test_keyboard
 	},
 	{
 		.name = NULL

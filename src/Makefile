@@ -12,7 +12,7 @@ all: boot.bin
 	$(MMDIR)/tools/mkmmimg $@
 
 boot.elf: linker.ld $(OBJECTS)
-	$(LD) $(LDFLAGS) -T linker.ld -N -o $@ -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet --start-group $(OBJECTS) -lbase -lmath -lnet --end-group
+	$(LD) $(LDFLAGS) -T linker.ld -N -o $@ -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal $(OBJECTS) -lbase -lmath -lnet -lhal -lbase
 	chmod -x $@
 
 load: boot.bin
