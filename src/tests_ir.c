@@ -27,6 +27,7 @@ static int reception()
 	char c;
 	int rx;
 
+	printf("Press the remote's \"power\" button...\n");
 	printf("Waiting for remote. f to fail test, s to skip.\n");
 	while(1) {
 		while(!(irq_pending() & IRQ_IR)) {
