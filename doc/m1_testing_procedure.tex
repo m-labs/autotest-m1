@@ -14,7 +14,7 @@
 
 \title{Milkymist\texttrademark~ One testing procedure}
 \author{S\'ebastien Bourdeauducq}
-\date{August 2010}
+\date{November 2010}
 \begin{document}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{5pt}
@@ -36,11 +36,11 @@ For successfully running all the tests, the following hardware set-up is needed:
 \item An audio source must be available to feed the line input of the board.
 \item An audio amplifier must be connected to the line output of the board.
 \item The board must be on an Ethernet network with a computer responding to the IP address \verb!192.168.0.14!.
-\item A video source must be connected to the board's video input connector. (TODO)
+\item A video source must be connected to the board's video input connector.
 \item The MIDI ports must be connected together (loopback) with a standard MIDI cable, preferably of the maximum length specified by the standard (15m).
 \item The DMX ports must be connected together (loopback).
 \item A RC5 remote control must be available to trigger the infrared sensor.
-\item Full speed and low speed USB devices must be available to test the host controller. (TODO)
+\item An USB keyboard must be available to test the host controller.
 \end{enumerate}
 
 \section{Compiling the automated testing program}
@@ -151,9 +151,12 @@ Any computer normally configured with the IP address \verb!192.168.0.14! should 
 
 \subsection{Video input}
 \subsubsection{Decoder probe}
-TODO
+This reads the identification register of the ADV7181 video chip and verifies its value.
+
 \subsubsection{Capture}
-TODO
+This test attempts to capture one video frame, display it and asks if it is correctly rendered. Because of interlacing, the height of the captured picture is divided by two, and the resulting aspect ratio is not corrected by the test.
+
+While waiting for the frame to be captured, the \verb!s! and \verb!f! keys can be used to skip and fail the test, respectively.
 
 \subsection{MIDI}
 The test sends the 256 possible values of the bytes used in the MIDI protocol, and check that they are correctly received back. The MIDI input and output connectors of the board must be connected together for this test.
@@ -165,7 +168,9 @@ The test sets the 512 DMX channels of the transmitter to a pre-defined pattern, 
 The test waits for a "power off" RC5 code to be received. The device identification bits of the RC5 codes are ignored, so most RC5 remote controls can be used to perform the test. If the IR sensor does not respond, the command \verb!f! can be typed to mark the test as failed. If the IR test is not desired, it can be skipped with the command \verb!s!.
 
 \subsection{USB}
-TODO
+The test waits for the \verb!ENTER! key to be pressed on a USB keyboard connected to each port, in turn.
+
+While waiting for the \verb!ENTER! key to be pressed, the \verb!s! and \verb!f! keys can be used to skip and fail the test, respectively.
 
 \section{Example session}
 \begin{verbatim}
