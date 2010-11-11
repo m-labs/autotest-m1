@@ -174,7 +174,7 @@ static int ddc()
 #define BSHIFT 0
 #define MAKERGB565(r, g, b) ((((r) & 0x1f) << RSHIFT) | (((g) & 0x3f) << GSHIFT) | (((b) & 0x1f) << BSHIFT))
 
-static short int fb[640*480] __attribute__((aligned(32)));
+short int fb[640*480] __attribute__((aligned(32)));
 static int testcard()
 {
 	unsigned int x, y;
@@ -216,13 +216,10 @@ static int testcard()
 		c = readchar();
 		switch(c) {
 			case 'y':
-				CSR_VGA_RESET = 1;
 				return TEST_STATUS_PASSED;
 			case 'n':
-				CSR_VGA_RESET = 1;
 				return TEST_STATUS_FAILED;
 			case 's':
-				CSR_VGA_RESET = 1;
 				return TEST_STATUS_NOT_DONE;
 		}
 	}

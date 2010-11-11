@@ -4,7 +4,7 @@ ENTRY(_start)
 __DYNAMIC = 0;
 
 MEMORY {
-	sdram : ORIGIN = 0x40000000, LENGTH = 0x1000000
+	sdram : ORIGIN = 0x40000000, LENGTH = 0x400000 /* use only the first 4M already tested by libHPDMC */
 }
 
 SECTIONS

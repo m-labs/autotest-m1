@@ -16,7 +16,6 @@
  */
 
 #include <stdio.h>
-#include <hw/vga.h>
 #include <hw/bt656cap.h>
 #include <hw/interrupts.h>
 #include <irq.h>
@@ -38,16 +37,13 @@ static int decoder_probe()
 }
 
 /* Must be run after the VGA test to initialize the frambuffer! */
-static short int fb[640*480] __attribute__((aligned(32)));
+extern short int fb[];
 static short vbuffer[720*288] __attribute__((aligned(32)));
 static int capture()
 {
 	int x, y;
 	char c;
 	
-	CSR_VGA_BASEADDRESS = (unsigned int)fb;
-	CSR_VGA_RESET = 0;
-
 	for(x=0;x<640*480;x++)
 		fb[x] = 0;
 	for(x=0;x<720*288;x++)
@@ -99,10 +95,8 @@ static int capture()
 		c = readchar();
 		switch(c) {
 			case 'y':
-				CSR_VGA_RESET = 1;
 				return TEST_STATUS_PASSED;
 			case 'n':
-				CSR_VGA_RESET = 1;
 				return TEST_STATUS_FAILED;
 		}
 	}
