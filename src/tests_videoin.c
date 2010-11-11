@@ -48,6 +48,9 @@ static int capture()
 		fb[x] = 0;
 	for(x=0;x<720*288;x++)
 		vbuffer[x] = 0;
+
+	printf("Press a key to start capturing\n");
+	readchar();
 	
 	printf("Waiting for a captured frame. f to fail test, s to skip.\n");
 	
