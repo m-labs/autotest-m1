@@ -29,6 +29,12 @@ static void keyboard_cb(unsigned char modifiers, unsigned char key)
 		success = 1;
 }
 
+static void mouse_cb(unsigned char buttons, char dx, char dy, unsigned char wheel)
+{
+	if(buttons == 0x01)
+		success = 1;
+}
+
 static int test_keyboard()
 {
 	char c;
@@ -37,9 +43,10 @@ static int test_keyboard()
 		usb_init();
 		initialized = 1;
 	}
-	printf("Press ENTER at the USB keyboard...\n");
+	printf("Press ENTER at the USB keyboard or press the left mouse button...\n");
 	success = 0;
 	usb_set_keyboard_cb(keyboard_cb);
+	usb_set_mouse_cb(mouse_cb);
 	while(!success) {
 		if(readchar_nonblock()) {
 			c = readchar();
@@ -49,6 +56,7 @@ static int test_keyboard()
 				return TEST_STATUS_NOT_DONE;
 		}
 	}
+	usb_set_mouse_cb(NULL);
 	usb_set_keyboard_cb(NULL);
 	return TEST_STATUS_PASSED;
 }
