@@ -32,8 +32,10 @@ static int decoder_probe()
 	reg = vin_read_reg(0x11);
 	if((reg == 0x11) || (reg == 0x13))
 		return TEST_STATUS_PASSED;
-	else
+	else {
+		printf("Unexpected register value: 0x%02x\n", reg);
 		return TEST_STATUS_FAILED;
+	}
 }
 
 /* Must be run after the VGA test to initialize the frambuffer! */
