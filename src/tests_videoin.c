@@ -45,6 +45,7 @@ static int capture()
 {
 	int x, y;
 	char c;
+	unsigned int status;
 	
 	for(x=0;x<640*480;x++)
 		fb[x] = 0;
@@ -95,6 +96,9 @@ static int capture()
 			fb[640*y+x] = vbuffer[720*y+x];
 	flush_bridge_cache();
 
+	status = vin_read_reg(0x10);
+	printf("LOCKS: %d\n", status & 0x07);
+	printf("AD_RESULT: %d\n", (status & 0x70) >> 4);
 	printf("Is the picture OK? (y/n)\n");
 	while(1) {
 		c = readchar();
