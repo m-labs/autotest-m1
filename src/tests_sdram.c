@@ -31,28 +31,34 @@ static void flush_caches()
 static int a8()
 {
 	unsigned int adr1, adr2;
+	int j;
 
-	adr1 = 0x40000000 + 0x1400000;
-	adr2 = 0x40000000 + 0x1000000;
-	*((unsigned int *)adr1) = 0x2991fe76;
-	*((unsigned int *)adr2) = 0x860eab97;
-	flush_caches();
-	if(*((unsigned int *)adr1) != 0x2991fe76) return TEST_STATUS_FAILED;
-	if(*((unsigned int *)adr2) != 0x860eab97) return TEST_STATUS_FAILED;
+	for(j=0;j<2000;j++) {
+		adr1 = 0x40000000 + 0x1400000;
+		adr2 = 0x40000000 + 0x1000000;
+		*((unsigned int *)adr1) = 0x2991fe76;
+		*((unsigned int *)adr2) = 0x860eab97;
+		flush_caches();
+		if(*((unsigned int *)adr1) != 0x2991fe76) return TEST_STATUS_FAILED;
+		if(*((unsigned int *)adr2) != 0x860eab97) return TEST_STATUS_FAILED;
+	}
 	return TEST_STATUS_PASSED;
 }
 
 static int test_a(unsigned int a)
 {
 	unsigned int adr1, adr2;
+	int j;
 	
-	adr1 = 0x40000000 + 0x400000;
-	adr2 = adr1 | ((1024*4*4) << a);
-	*((unsigned int *)adr1) = (0x3a499876+a);
-	*((unsigned int *)adr2) = (0x08af8401+a);
-	flush_caches();
-	if(*((unsigned int *)adr1) != (0x3a499876+a)) return TEST_STATUS_FAILED;
-	if(*((unsigned int *)adr2) != (0x08af8401+a)) return TEST_STATUS_FAILED;
+	for(j=0;j<2000;j++) {
+		adr1 = 0x40000000 + 0x400000;
+		adr2 = adr1 | ((1024*4*4) << a);
+		*((unsigned int *)adr1) = (0x3a499876+a);
+		*((unsigned int *)adr2) = (0x08af8401+a);
+		flush_caches();
+		if(*((unsigned int *)adr1) != (0x3a499876+a)) return TEST_STATUS_FAILED;
+		if(*((unsigned int *)adr2) != (0x08af8401+a)) return TEST_STATUS_FAILED;
+	}
 	return TEST_STATUS_PASSED;
 }
 
@@ -66,20 +72,22 @@ static int a12() { return test_a(12); }
 static int random()
 {
 	unsigned int test_buffer[TEST_WORDS];
-	int i;
+	int i, j;
 	unsigned int r;
 
-	r = 0;
-	for(i=0;i<TEST_WORDS;i++) {
-		test_buffer[i] = r;
-		r = 1664525*r + 1013904223;
-	}
-	flush_caches();
-	r = 0;
-	for(i=0;i<TEST_WORDS;i++) {
-		if(test_buffer[i] != r)
-			return TEST_STATUS_FAILED;
-		r = 1664525*r + 1013904223;
+	for(j=0;j<15;j++) {
+		r = 0;
+		for(i=0;i<TEST_WORDS;i++) {
+			test_buffer[i] = r;
+			r = 1664525*r + 1013904223;
+		}
+		flush_caches();
+		r = 0;
+		for(i=0;i<TEST_WORDS;i++) {
+			if(test_buffer[i] != r)
+				return TEST_STATUS_FAILED;
+			r = 1664525*r + 1013904223;
+		}
 	}
 	return TEST_STATUS_PASSED;
 }
@@ -87,28 +95,32 @@ static int random()
 static int hammer()
 {
 	unsigned int test_buffer[TEST_WORDS];
-	int i;
+	int i, j;
 
-	for(i=0;i<TEST_WORDS;i++)
-		test_buffer[i] = i & 1 ? 0xffffffff : 0x00000000;
-	flush_caches();
-	for(i=0;i<TEST_WORDS;i++)
-		if(test_buffer[i] != (i & 1 ? 0xffffffff : 0x00000000))
-			return TEST_STATUS_FAILED;
+	for(j=0;j<15;j++) {
+		for(i=0;i<TEST_WORDS;i++)
+			test_buffer[i] = i & 1 ? 0xffffffff : 0x00000000;
+		flush_caches();
+		for(i=0;i<TEST_WORDS;i++)
+			if(test_buffer[i] != (i & 1 ? 0xffffffff : 0x00000000))
+				return TEST_STATUS_FAILED;
+	}
 	return TEST_STATUS_PASSED;
 }
 
 static int crosstalk()
 {
 	unsigned int test_buffer[TEST_WORDS];
-	int i;
+	int i, j;
 
-	for(i=0;i<TEST_WORDS;i++)
-		test_buffer[i] = i & 1 ? 0xaaaaaaaa : 0x55555555;
-	flush_caches();
-	for(i=0;i<TEST_WORDS;i++)
-		if(test_buffer[i] != (i & 1 ? 0xaaaaaaaa : 0x55555555))
-			return TEST_STATUS_FAILED;
+	for(j=0;j<15;j++) {
+		for(i=0;i<TEST_WORDS;i++)
+			test_buffer[i] = i & 1 ? 0xaaaaaaaa : 0x55555555;
+		flush_caches();
+		for(i=0;i<TEST_WORDS;i++)
+			if(test_buffer[i] != (i & 1 ? 0xaaaaaaaa : 0x55555555))
+				return TEST_STATUS_FAILED;
+	}
 	return TEST_STATUS_PASSED;
 }
 
