@@ -60,12 +60,17 @@ static int snd_ac97_write(unsigned int addr, unsigned int value)
 
 static int codecprobe()
 {
+	int reg;
+	
 	CSR_AC97_CRCTL = 0;
 	CSR_AC97_DCTL = 0;
 	CSR_AC97_UCTL = 0;
 
-	if(snd_ac97_read(0x00) != 0x0d50)
+	reg = snd_ac97_read(0x00);
+	if((reg != 0x0d50) && (reg != 0x6150)) {
+		printf("Unknown codec ID: %04x\n", reg);
 		return TEST_STATUS_FAILED;
+	}
 
 	return TEST_STATUS_PASSED;
 }
