@@ -20,6 +20,7 @@
 #include <irq.h>
 #include <uart.h>
 #include <stdio.h>
+#include <console.h>
 #include "testdefs.h"
 
 void isr()
@@ -116,21 +117,27 @@ static void print_test_status(int status)
 	printf("\x1b\x5b\x33\x39\x3b\x34\x39\x6d\x20\x5d\n");
 }
 
+static void run_in_category(struct test_category *cat, int ic)
+{
+	int it;
+	
+	it = 0;
+	while(cat[ic].tests[it].name != NULL) {
+		printf("%s:\n", cat[ic].tests[it].name);
+		cat[ic].tests[it].status = cat[ic].tests[it].run();
+		print_test_status(cat[ic].tests[it].status);
+		it++;
+	}
+}
+
 static void run_all_tests(struct test_category *cat)
 {
 	int ic;
-	int it;
 
 	ic = 0;
 	while(cat[ic].name != NULL) {
 		printf("*** Running tests in category: %s\n", cat[ic].name);
-		it = 0;
-		while(cat[ic].tests[it].name != NULL) {
-			printf("%s:\n", cat[ic].tests[it].name);
-			cat[ic].tests[it].status = cat[ic].tests[it].run();
-			print_test_status(cat[ic].tests[it].status);
-			it++;
-		}
+		run_in_category(cat, ic);
 		ic++;
 		printf("\n");
 	}
@@ -183,14 +190,27 @@ static void print_summary(struct test_category *cat)
 
 int main()
 {
+	char c;
+	int i;
+	
 	irq_setmask(0);
 	irq_enable(1);
 	uart_init();
 	printf("*** Milkymist One automated tests starting...\n\n");
-	run_all_tests(categories);
-	printf("******** TEST SUMMARY ********\n");
-	print_summary(categories);
-	printf("*** Power off/reset board now...\n");
-	while(1);
+	while(1) {
+		printf("Select a test category below, or hit ENTER to run all tests:\n");
+		i = 0;
+		while(categories[i].name != NULL) {
+			printf("%c: %s\n", 'a'+i, categories[i].name);
+			i++;
+		}
+		c = readchar();
+		if(c == '\n') {
+			run_all_tests(categories);
+			printf("******** TEST SUMMARY ********\n");
+			print_summary(categories);
+		} else if((c >= 'a') && ((c - 'a') < i))
+			run_in_category(categories, c - 'a');
+	}
 	return 0;
 }
