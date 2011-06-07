@@ -25,24 +25,64 @@
 static int reception()
 {
 	char c;
-	int rx;
+	int pre_rx,i,rx;
+	int result;
 
-	printf("Press the remote's \"power\" button...\n");
-	printf("Waiting for remote. f to fail test, s to skip.\n");
+	int rc5_code[5] = {0x0c, 0x01, 0x03, 0x05, 0x10};
+
+	char *code_strings[] = {
+		"[Standby] passed",
+		"[1] passed",
+		"[3] passed",
+		"[5] passed",
+		"[VolumeUp] passed"
+	};
+
+	pre_rx = 0;
+	i = 0;
+	result = TEST_STATUS_NOT_DONE;
+
+	printf("Press the remote's [standby], [1], [3], [5], [VolumeUp] one by one\n");
+	printf("Waiting for remote. e for exit\n");
+
 	while(1) {
 		while(!(irq_pending() & IRQ_IR)) {
 			if(readchar_nonblock()) {
 				c = readchar();
-				if(c == 'f')
-					return TEST_STATUS_FAILED;
-				if(c == 's')
-					return TEST_STATUS_NOT_DONE;
+				if(c == 'e')
+					return result;
 			}
 		}
+
 		rx = CSR_RC5_RX;
 		irq_ack(IRQ_IR);
-		if((rx & 0x003f) == 12)
-			return TEST_STATUS_PASSED;
+
+		if(i == 5 || i == -1) { /* 5: all passed, -1: failed */
+			printf("Now press 'e' exit Infrared test\n");
+			continue;
+		}
+
+		printf("  should be [0x%02x], get [0x%02x], [0x%04x].\n",
+		       rc5_code[i], rx & 0x003f, rx);
+
+		rx = rx & 0x003f;
+
+		if(rx != pre_rx) {
+			if(rx != rc5_code[i]) {
+				result = TEST_STATUS_FAILED;
+				i = -1;
+				continue;
+			}
+
+			printf("%s\n", code_strings[i]);
+			pre_rx = rx;
+			i++;
+
+			if(i == 5) {
+				result = TEST_STATUS_PASSED;
+				continue;
+			}
+		}
 	}
 }
 
