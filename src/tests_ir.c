@@ -28,27 +28,19 @@ static int reception()
 	int pre_rx,i,rx;
 	int result;
 
-	int rc5_code[10] = {0x01, 0x02, 0x03, 0x04, 0x05,
-			    0x06, 0x07, 0x08, 0x09, 0x00};
+	int rc5_code[3] = {0x01, 0x03, 0x05};
 
 	char *code_strings[] = {
 		"[1] passed",
-		"[2] passed",
 		"[3] passed",
-		"[4] passed",
 		"[5] passed",
-		"[6] passed",
-		"[7] passed",
-		"[8] passed",
-		"[9] passed",
-		"[0] passed",
 	};
 
 	pre_rx = 0;
 	i = 0;
 	result = TEST_STATUS_NOT_DONE;
 
-	printf("Press the remote's [1] ... [9], [0], one by one\n");
+	printf("Press the remote's [1] [3] [5], one by one\n");
 	printf("Waiting for remote. e for exit\n");
 
 	while(1) {
@@ -63,7 +55,7 @@ static int reception()
 		rx = CSR_RC5_RX;
 		irq_ack(IRQ_IR);
 
-		if(i == 10 || i == -1) { /* 10: all passed, -1: failed */
+		if(i == 3 || i == -1) { /* 3: all passed, -1: failed */
 			printf("Now press 'e' exit Infrared test. rx [0x%04x]\n", rx);
 			continue;
 		}
@@ -84,7 +76,7 @@ static int reception()
 			pre_rx = rx;
 			i++;
 
-			if(i == 10) {
+			if(i == 3) {
 				result = TEST_STATUS_PASSED;
 				continue;
 			}
