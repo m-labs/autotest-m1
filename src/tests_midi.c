@@ -41,7 +41,7 @@ static int loopback()
 
 struct test_description tests_midi[] = {
 	{
-		.name = "Loopback",
+		.name = "MIDI Loopback",
 		.run = loopback
 	},
 	{

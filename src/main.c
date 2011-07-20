@@ -198,10 +198,10 @@ int main()
 	uart_init();
 	printf("*** Milkymist One automated tests starting...\n\n");
 	while(1) {
-		printf("Select a test category below, or hit ENTER to run all tests:\n");
+		printf("*** Select a test category below, or hit ENTER to run all tests:\n");
 		i = 0;
 		while(categories[i].name != NULL) {
-			printf("%c: %s\n", 'a'+i, categories[i].name);
+			printf("  %c: %s\n", 'a'+i, categories[i].name);
 			i++;
 		}
 		c = readchar();
@@ -209,8 +209,10 @@ int main()
 			run_all_tests(categories);
 			printf("******** TEST SUMMARY ********\n");
 			print_summary(categories);
-		} else if((c >= 'a') && ((c - 'a') < i))
+		} else if((c >= 'a') && ((c - 'a') < i)) {
+			printf("*** %c pressed\n", c);
 			run_in_category(categories, c - 'a');
+		}
 	}
 	return 0;
 }
