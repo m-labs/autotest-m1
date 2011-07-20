@@ -56,7 +56,7 @@ static int reception()
 		irq_ack(IRQ_IR);
 
 		if(i == 3 || i == -1) { /* 3: all passed, -1: failed */
-			printf("Now press 'e' exit Infrared test. rx [0x%04x]\n", rx);
+			printf("Now press 'e' exit infrared test. rx [0x%04x]\n", rx);
 			continue;
 		}
 

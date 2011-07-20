@@ -23,20 +23,40 @@
 
 static int loopback()
 {
-	unsigned int c;
+	unsigned int c = 0;
+	char e;
+	int result = TEST_STATUS_PASSED;
 
+	printf("press 'e' exit MIDI test\n");
 	irq_ack(IRQ_MIDITX|IRQ_MIDIRX);
-	for(c=0;c<256;c++) {
+	while(1) {
+		if (c == 256) {
+			printf("0 ~ 255 sent out, press 'e' for exit\n");
+			c = 0;
+		}
 		CSR_MIDI_RXTX = c;
-		while(!(irq_pending() & IRQ_MIDITX));
+		while(!(irq_pending() & IRQ_MIDITX)) {
+			if(readchar_nonblock()) {
+				e = readchar();
+				if(e == 'e') return result;
+			}
+		}
 		irq_ack(IRQ_MIDITX);
-		
-		if(!(irq_pending() & IRQ_MIDIRX)) return TEST_STATUS_FAILED;
-		if(CSR_MIDI_RXTX != c) return TEST_STATUS_FAILED;
+
+		if(!(irq_pending() & IRQ_MIDIRX)) {
+			printf("Failed: RX receive problem\n");
+			result = TEST_STATUS_FAILED;
+		}
+
+		if(CSR_MIDI_RXTX != c) {
+			printf("Failed: TX: %d, but RX: %d\n", c, CSR_MIDI_RXTX);
+			result = TEST_STATUS_FAILED;
+		}
 		irq_ack(IRQ_MIDIRX);
+		c++;
 	}
 	
-	return TEST_STATUS_PASSED;
+	return result;
 }
 
 struct test_description tests_midi[] = {
