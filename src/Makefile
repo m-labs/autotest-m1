@@ -1,18 +1,25 @@
 include $(MMDIR)/software/include.mak
 
-OBJECTS=crt0.o main.o tests_sdram.o tests_gpio.o tests_vga.o tests_memorycard.o tests_audio.o tests_ethernet.o tests_videoin.o tests_midi.o tests_dmx.o tests_ir.o tests_usb.o
-SEGMENTS=-j .text -j .data -j .rodata
+SRCS    = $(wildcard *.c)
+COBJS   = $(SRCS:.c=.o)
+OBJECTS = crt0.o $(COBJS)
+
+SEGMENTS= -j .text -j .data -j .rodata
+
+LDFLAGS+= -T linker.ld -N
+LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
+LIBS    = -lbase -lmath -lnet -lhal -lbase
 
 all: boot.bin
 
 %.bin: %.elf
-	$(MAKE) -C $(MMDIR)/tools
 	$(OBJCOPY) $(SEGMENTS) -O binary $< $@
 	chmod -x $@
+	$(MAKE) -C $(MMDIR)/tools
 	$(MMDIR)/tools/mkmmimg $@
 
 boot.elf: linker.ld $(OBJECTS)
-	$(LD) $(LDFLAGS) -T linker.ld -N -o $@ -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal $(OBJECTS) -lbase -lmath -lnet -lhal -lbase
+	$(LD) $(LDFLAGS) $(OBJECTS) -o $@  $(LIBS)
 	chmod -x $@
 
 load: boot.bin
