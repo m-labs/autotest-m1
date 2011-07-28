@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <irq.h>
+#include <console.h>
 #include <hw/midi.h>
 #include <hw/interrupts.h>
 #include "testdefs.h"
