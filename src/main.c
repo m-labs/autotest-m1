@@ -49,6 +49,7 @@ extern struct test_description tests_midi[];
 extern struct test_description tests_dmx[];
 extern struct test_description tests_ir[];
 extern struct test_description tests_usb[];
+extern struct test_description tests_images[];
 
 struct test_category categories[] = {
 	{
@@ -94,6 +95,10 @@ struct test_category categories[] = {
 	{
 		.name = "USB",
 		.tests = tests_usb
+	},
+	{
+		.name = "Images",
+		.tests = tests_images
 	},
 	{
 		.name = NULL
