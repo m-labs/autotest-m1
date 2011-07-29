@@ -53,6 +53,10 @@ extern struct test_description tests_images[];
 
 struct test_category categories[] = {
 	{
+		.name = "Images",
+		.tests = tests_images
+	},
+	{
 		.name = "SDRAM",
 		.tests = tests_sdram
 	},
@@ -95,10 +99,6 @@ struct test_category categories[] = {
 	{
 		.name = "USB",
 		.tests = tests_usb
-	},
-	{
-		.name = "Images",
-		.tests = tests_images
 	},
 	{
 		.name = NULL
