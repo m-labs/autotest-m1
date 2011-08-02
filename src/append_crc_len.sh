@@ -8,7 +8,7 @@ BOOT_BIN_TMP=`mktemp`
 FILENAMES=\
 standby.fpg,\
 soc-rescue.fpg,\
-bios-rescue.bin,\
+bios-rescue-without-CRC.bin,\
 splash-rescue.raw,\
 flickernoise.fbi,\
 soc.fpg,\
@@ -22,7 +22,10 @@ create_crc_len_file() {
     CRC=`mkmmimg $1 | awk '{print $3}'`
     LEN=`ls -l   $1 | awk '{printf "%08x\n",$5}'`
 
-    if [ `basename "$1"` == "bios-rescue.bin" -o `basename "$1"` == "bios.bin" ]; then
+    if [ `basename "$1"` == "bios-rescue-without-CRC.bin" ]; then
+	CRC="00000000"
+    fi
+    if [ `basename "$1"` == "bios.bin" ]; then
 	CRC="00000000"
 	LEN=`ls -l   $1 | awk '{printf "%08x\n",$5-4}'`
     fi
