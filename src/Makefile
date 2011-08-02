@@ -25,7 +25,10 @@ boot.elf: linker.ld $(OBJECTS)
 load: boot.bin
 	$(MMDIR)/tools/flterm --port /dev/ttyUSB0 --kernel boot.bin
 
-.PHONY: clean depend load
+.PHONY: clean depend load boot.crc.bin
+
+boot.crc.bin: boot.bin
+	IMAGES_DIR=$(IMGDIR) ./append_crc_len.sh
 
 depend:
 	makedepend -Y -- $(CFLAGS) -- *.c
