@@ -1,6 +1,9 @@
 #!/bin/bash
 
+BOOT_CRC_BIN="boot.crc.bin"
+
 CRC_LEN_TMP=`mktemp`
+BOOT_BIN_TMP=`mktemp`
 
 FILENAMES=\
 standby.fpg,\
@@ -50,14 +53,14 @@ create_crc_len_file() {
     printf "\\x$(printf "%x" 0x${LEN4})" >> ${CRC_LEN_TMP}
 }
 
-cp boot.bin boot.crc.bin
+cp boot.bin ${BOOT_CRC_BIN}
 
 for (( i=0; i<9; i++ ))
 do
     if [ -e ${IMAGES_DIR}/${FILES[i]} ]; then
 	 create_crc_len_file ${IMAGES_DIR}/${FILES[i]}
-	 cp -f boot.crc.bin boot.bin.tmp
-	 cat boot.bin.tmp ${CRC_LEN_TMP} > boot.crc.bin
+	 cp -f ${BOOT_CRC_BIN} ${BOOT_BIN_TMP}
+	 cat ${BOOT_BIN_TMP} ${CRC_LEN_TMP} > ${BOOT_CRC_BIN}
     else
 	echo "${IMAGES_DIR}/${FILES[i]} not exist, check IMAGES_DIR value"
 	exit 1
