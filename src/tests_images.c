@@ -27,93 +27,28 @@
 
 #include "testdefs.h"
 
-struct m1_image {
-	char *name;
-	unsigned int *addr;
-	unsigned int crc;
-	unsigned int len;
-};
-
-static struct m1_image images[] = {
-	{
-		.name = "standby.fpg",
-		.addr = (unsigned int *)FLASH_OFFSET_STANDBY_BITSTREAM,
-		.crc = 0xc58e8905,
-		.len = 495060
-	},
-	{
-		.name = "soc-rescue.fpg",
-		.addr = (unsigned int *)FLASH_OFFSET_RESCUE_BITSTREAM,
-		.crc = 0x30dcc535,
-		.len = 1484404
-	},
-	{
-		.name = "bios-rescue.bin(CRC)",
-		.addr = (unsigned int *)FLASH_OFFSET_RESCUE_BIOS,
-		.crc = 0,
-		.len = 73812
-	},
-	{
-		.name = "splash-rescue.raw",
-		.addr = (unsigned int *)FLASH_OFFSET_RESCUE_SPLASH,
-		.crc = 0xe8ff824f,
-		.len = 614400
-	},
-	{
-		.name = "flickernoise.fbi(rescue)(CRC)",
-		.addr = (unsigned int *)FLASH_OFFSET_RESCUE_APP,
-		.crc = 0,
-		.len = 0
-	},
-	{
-		.name = "soc.fpg",
-		.addr = (unsigned int *)FLASH_OFFSET_REGULAR_BITSTREAM,
-		.crc = 0x3a31e737,
-		.len = 1484404
-	},
-	{
-		.name = "bios.bin(CRC)",
-		.addr = (unsigned int *)FLASH_OFFSET_REGULAR_BIOS,
-		.crc = 0,
-		.len = (73724 - 4)
-	},
-	{
-		.name = "splash.raw",
-		.addr = (unsigned int *)FLASH_OFFSET_REGULAR_SPLASH,
-		.crc = 0x978f860c,
-		.len = 614400
-	},
-	{
-		.name = "flickernoise.fbi(CRC)",
-		.addr = (unsigned int *)FLASH_OFFSET_REGULAR_APP,
-		.crc = 0,
-		.len = 0
-	},
-	{
-		.name = NULL
-	}
-};
-
 static int compare_crc(unsigned int *flashbase, unsigned int crc, unsigned int length)
 {
 	unsigned int got_crc;
 
-	if(length == 0 && crc == 0) {
+	/* Flickernoise have the length and crc at begin, See makefile of Flickernoise */
+	if((unsigned int)flashbase == FLASH_OFFSET_RESCUE_APP ||
+	   (unsigned int)flashbase == FLASH_OFFSET_REGULAR_APP) {
 		length = *flashbase++;
 		crc = *flashbase++;
 	}
 
-	if(length != 0 && crc == 0)
+	/* BIOS have the crc at end, See makefile of BIOS */
+	if((unsigned int)flashbase == FLASH_OFFSET_RESCUE_BIOS ||
+	   (unsigned int)flashbase == FLASH_OFFSET_REGULAR_BIOS)
 		crc = *(flashbase + (length / 4));
 
 	if((length < 32) || (length > 4*1024*1024)) {
-		printf("Invalid flash image length\n");
+		printf("Invalid flash image length: %d\n", length);
 		return TEST_STATUS_FAILED;
 	}
 
-	unsigned int membase = SDRAM_BASE + 2000000;
-	memcpy((void *)membase, flashbase, length);
-	got_crc = crc32((unsigned char *)membase, length);
+	got_crc = crc32((unsigned char *)flashbase, length);
 	if(crc != got_crc) {
 		printf("CRC failed (expected %08x, got %08x)\n", crc, got_crc);
 		return TEST_STATUS_FAILED;
@@ -123,22 +58,64 @@ static int compare_crc(unsigned int *flashbase, unsigned int crc, unsigned int l
 	return TEST_STATUS_PASSED;
 }
 
+extern unsigned int _edata;
+
+#define IMAGES_COUNT 9
+
 static int compare_loop()
 {
-	int i, ret, result;
+	int i, ret, count;
 
-	result = TEST_STATUS_PASSED;
-	i = 0;
-	while(images[i].name != NULL) {
-		printf("  Checking : %s\t", images[i].name);
-		ret = compare_crc(images[i].addr, images[i].crc, images[i].len);
+	unsigned int crc, len;
+	unsigned int images[IMAGES_COUNT];
+
+	unsigned int * file_end = (unsigned int *) ((unsigned int)&_edata);
+
+	char * images_name[IMAGES_COUNT] = {
+		"standby.fpg",
+		"soc-rescue.fpg",
+		"bios-rescue.bin",
+		"splash-rescue.raw",
+		"flickernoise.fbi",
+		"soc.fpg",
+		"bios.bin",
+		"splash.raw",
+		"flickernoise.fbi"
+	};
+
+	images[0] = FLASH_OFFSET_STANDBY_BITSTREAM;
+	images[1] = FLASH_OFFSET_RESCUE_BITSTREAM;
+	images[2] = FLASH_OFFSET_RESCUE_BIOS;
+	images[3] = FLASH_OFFSET_RESCUE_SPLASH;
+	images[4] = FLASH_OFFSET_RESCUE_APP;
+	images[5] = FLASH_OFFSET_REGULAR_BITSTREAM;
+	images[6] = FLASH_OFFSET_REGULAR_BIOS;
+	images[7] = FLASH_OFFSET_REGULAR_SPLASH;
+	images[8] = FLASH_OFFSET_REGULAR_APP;
+
+	/*
+	 * images crc and len write at the end of boot.bin
+	 * see "append_crc_len.sh" for more info
+	 */
+
+	count = 0;
+	for(i = 0; i < IMAGES_COUNT; i++) {
+		crc = *file_end++;
+		len = *file_end++;
+
+		printf("  %s\t", images_name[i]);
+
+		ret = compare_crc((unsigned int *)images[i], crc, len);
 		if(ret == TEST_STATUS_FAILED)
-			result = TEST_STATUS_FAILED;
-		i++;
+			count++;
 	}
 
-	printf("\n");
-	return result;
+	if(count == 0)
+		return TEST_STATUS_PASSED;
+	else {
+		printf("%d images failed\n", count);
+		return TEST_STATUS_FAILED;
+	}
 }
 
 struct test_description tests_images[] = {
