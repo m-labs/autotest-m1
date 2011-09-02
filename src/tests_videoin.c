@@ -91,9 +91,9 @@ static int capture()
 		}
 	}
 	flush_bridge_cache();
-	for(y=0;y<288;y++)
+	for(y=0;y<480;y++)
 		for(x=0;x<640;x++)
-			fb[640*y+x] = vbuffer[720*y+x];
+			fb[640*y+x] = vbuffer[720*((int)y/2)+x];
 	flush_bridge_cache();
 
 	status = vin_read_reg(0x10);
