@@ -8,7 +8,7 @@ SEGMENTS= -j .text -j .data -j .rodata
 
 LDFLAGS+= -T linker.ld -N
 LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
-LIBS    = -lbase -lmath -lnet -lhal -lbase
+LIBS    = -lbase -lmath -lnet -lhal
 
 all: boot.bin
 
@@ -19,6 +19,10 @@ all: boot.bin
 	$(MMDIR)/tools/mkmmimg $@
 
 boot.elf: linker.ld $(OBJECTS)
+	make -C ${MMDIR}/software/libbase
+	make -C ${MMDIR}/software/libmath
+	make -C ${MMDIR}/software/libnet
+	make -C ${MMDIR}/software/libhal
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $@  $(LIBS)
 	chmod -x $@
 
