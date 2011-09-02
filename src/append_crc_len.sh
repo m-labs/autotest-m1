@@ -1,6 +1,7 @@
 #!/bin/bash
 
-BOOT_CRC_BIN="boot.crc.bin"
+REV=$(git log | head -n 1 | cut -b8-14)
+BOOT_CRC_BIN="boot.crc.${REV}.bin"
 
 CRC_LEN_TMP=`mktemp`
 BOOT_BIN_TMP=`mktemp`
@@ -70,5 +71,5 @@ do
     fi
 done
 
-echo "boot.crc.bin created"
+echo "${BOOT_CRC_BIN} created"
 exit 0

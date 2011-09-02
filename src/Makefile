@@ -32,7 +32,7 @@ load: boot.bin
 .PHONY: clean depend load boot.crc.bin
 
 boot.crc.bin: boot.bin
-	IMAGES_DIR=$(IMGDIR) ./append_crc_len.sh
+	IMAGES_DIR=$(IMAGES_DIR) ./append_crc_len.sh
 
 depend:
 	makedepend -Y -- $(CFLAGS) -- *.c
