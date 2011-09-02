@@ -201,7 +201,8 @@ int main()
 	irq_setmask(0);
 	irq_enable(1);
 	uart_init();
-	printf("*** Milkymist One automated tests starting...\n\n");
+	printf("*** Milkymist One automated tests starting...\n");
+	printf("*** Built: %s at %s (rev %s)\n\n", __DATE__, __TIME__, VERSION);
 	while(1) {
 		printf("*** Select a test category below, or hit ENTER to run all tests:\n");
 		i = 0;
