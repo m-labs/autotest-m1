@@ -44,4 +44,4 @@ depend:
 	makedepend -Y -- $(CFLAGS) -- *.c
 
 clean:
-	rm -f $(OBJECTS) boot.elf boot.bin boot.crc.bin .*~ *~ Makefile.bak
+	rm -f $(OBJECTS) boot.elf boot.bin boot.crc.*.bin .*~ *~ Makefile.bak
