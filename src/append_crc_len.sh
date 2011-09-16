@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REV=$(git log | head -n 1 | cut -b8-14)
+REV=$(git rev-parse HEAD | cut -b1-7)
 BOOT_CRC_BIN="boot.crc.${REV}.bin"
 
 CRC_LEN_TMP=`mktemp`
