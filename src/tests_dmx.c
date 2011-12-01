@@ -44,7 +44,7 @@ static int loopback()
 
 struct test_description tests_dmx[] = {
 	{
-		.name = "Loopback",
+		.name = "DMX512 Loopback",
 		.run = loopback
 	},
 	{

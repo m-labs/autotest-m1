@@ -29,10 +29,8 @@ void isr()
 
 	irqs = irq_pending() & irq_getmask();
 
-	if(irqs & IRQ_UARTRX)
-		uart_isr_rx();
-	if(irqs & IRQ_UARTTX)
-		uart_isr_tx();
+	if(irqs & IRQ_UART)
+		uart_isr();
 
 	if(irqs & IRQ_USB)
 		usb_isr();
@@ -49,8 +47,13 @@ extern struct test_description tests_midi[];
 extern struct test_description tests_dmx[];
 extern struct test_description tests_ir[];
 extern struct test_description tests_usb[];
+extern struct test_description tests_images[];
 
 struct test_category categories[] = {
+	{
+		.name = "Images",
+		.tests = tests_images
+	},
 	{
 		.name = "SDRAM",
 		.tests = tests_sdram
@@ -196,12 +199,13 @@ int main()
 	irq_setmask(0);
 	irq_enable(1);
 	uart_init();
-	printf("*** Milkymist One automated tests starting...\n\n");
+	printf("*** Milkymist One automated tests starting...\n");
+	printf("*** Built: %s at %s (rev %s)\n\n", __DATE__, __TIME__, VERSION);
 	while(1) {
-		printf("Select a test category below, or hit ENTER to run all tests:\n");
+		printf("*** Select a test category below, or hit ENTER to run all tests:\n");
 		i = 0;
 		while(categories[i].name != NULL) {
-			printf("%c: %s\n", 'a'+i, categories[i].name);
+			printf("  %c: %s\n", 'a'+i, categories[i].name);
 			i++;
 		}
 		c = readchar();
@@ -209,8 +213,10 @@ int main()
 			run_all_tests(categories);
 			printf("******** TEST SUMMARY ********\n");
 			print_summary(categories);
-		} else if((c >= 'a') && ((c - 'a') < i))
+		} else if((c >= 'a') && ((c - 'a') < i)) {
+			printf("*** %c pressed\n", c);
 			run_in_category(categories, c - 'a');
+		}
 	}
 	return 0;
 }

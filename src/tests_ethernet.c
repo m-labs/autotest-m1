@@ -35,12 +35,10 @@ static int mdio()
 
 static int arp_resolution()
 {
-	int ethbuf[MICROUDP_BUFSIZE/4];
-	
-	microudp_start((unsigned char *)FLASH_OFFSET_MAC_ADDRESS, IPTOINT(192, 168, 0, 42), ethbuf);
+	microudp_start((unsigned char *)FLASH_OFFSET_MAC_ADDRESS, IPTOINT(192, 168, 0, 42));
 	if(!microudp_arp_resolve(IPTOINT(192, 168, 0, 14)))
 		return TEST_STATUS_FAILED;
-	microudp_shutdown();
+
 	return TEST_STATUS_PASSED;
 }
 

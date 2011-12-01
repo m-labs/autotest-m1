@@ -38,6 +38,7 @@ SECTIONS
 
 	.bss :
 	{
+		. = _edata + 72;
 		. = ALIGN(4);
 		_fbss = .;
 		*(.dynsbss)

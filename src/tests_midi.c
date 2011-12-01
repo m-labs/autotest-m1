@@ -17,31 +17,53 @@
 
 #include <stdio.h>
 #include <irq.h>
+#include <console.h>
 #include <hw/midi.h>
 #include <hw/interrupts.h>
 #include "testdefs.h"
 
 static int loopback()
 {
-	unsigned int c;
+	unsigned int c = 0;
+	char e;
+	int result = TEST_STATUS_PASSED;
 
-	irq_ack(IRQ_MIDITX|IRQ_MIDIRX);
-	for(c=0;c<256;c++) {
+	printf("press 'e' exit MIDI test\n");
+	irq_ack(IRQ_MIDI);
+	while(1) {
+		if (c == 256) {
+			printf("0 ~ 255 sent out, press 'e' for exit\n");
+			c = 0;
+		}
 		CSR_MIDI_RXTX = c;
-		while(!(irq_pending() & IRQ_MIDITX));
-		irq_ack(IRQ_MIDITX);
-		
-		if(!(irq_pending() & IRQ_MIDIRX)) return TEST_STATUS_FAILED;
-		if(CSR_MIDI_RXTX != c) return TEST_STATUS_FAILED;
-		irq_ack(IRQ_MIDIRX);
+		while(!(CSR_MIDI_STAT & MIDI_STAT_TX_EVT)) {
+			if(readchar_nonblock()) {
+				e = readchar();
+				if(e == 'e') return result;
+			}
+		}
+		CSR_MIDI_STAT = MIDI_STAT_TX_EVT;
+
+
+		if(CSR_MIDI_STAT & MIDI_STAT_RX_EVT) {
+			printf("Failed: RX receive problem\n");
+			result = TEST_STATUS_FAILED;
+		}
+
+		if(CSR_MIDI_RXTX != c) {
+			printf("Failed: TX: %d, but RX: %d\n", c, CSR_MIDI_RXTX);
+			result = TEST_STATUS_FAILED;
+		}
+		CSR_MIDI_STAT = MIDI_STAT_RX_EVT;
+		c++;
 	}
 	
-	return TEST_STATUS_PASSED;
+	return result;
 }
 
 struct test_description tests_midi[] = {
 	{
-		.name = "Loopback",
+		.name = "MIDI Loopback",
 		.run = loopback
 	},
 	{

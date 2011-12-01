@@ -1,27 +1,47 @@
 include $(MMDIR)/software/include.mak
 
-OBJECTS=crt0.o main.o tests_sdram.o tests_gpio.o tests_vga.o tests_memorycard.o tests_audio.o tests_ethernet.o tests_videoin.o tests_midi.o tests_dmx.o tests_ir.o tests_usb.o
-SEGMENTS=-j .text -j .data -j .rodata
+SRCS    = $(wildcard *.c)
+COBJS   = $(SRCS:.c=.o)
+OBJECTS = crt0.o $(COBJS)
+
+SEGMENTS= -j .text -j .data -j .rodata
+
+LDFLAGS+= -T linker.ld -N
+LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
+LIBS    = -lbase -lmath -lnet -lhal
+
+CFLAGS+= -DVERSION='"$(GIT_VERSION)$(GIT_STATUS)"'
+
+GIT_VERSION:=$(shell git rev-parse HEAD | cut -c 1-7)
+GIT_STATUS:=$(shell [ -z "`git status -s -uno`" ] || echo +)
+
 
 all: boot.bin
 
 %.bin: %.elf
-	$(MAKE) -C $(MMDIR)/tools
 	$(OBJCOPY) $(SEGMENTS) -O binary $< $@
 	chmod -x $@
+	$(MAKE) -C $(MMDIR)/tools
 	$(MMDIR)/tools/mkmmimg $@
 
 boot.elf: linker.ld $(OBJECTS)
-	$(LD) $(LDFLAGS) -T linker.ld -N -o $@ -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal $(OBJECTS) -lbase -lmath -lnet -lhal -lbase
+	make -C ${MMDIR}/software/libbase
+	make -C ${MMDIR}/software/libmath
+	make -C ${MMDIR}/software/libnet
+	make -C ${MMDIR}/software/libhal
+	$(LD) $(LDFLAGS) $(OBJECTS) -o $@  $(LIBS)
 	chmod -x $@
 
 load: boot.bin
 	$(MMDIR)/tools/flterm --port /dev/ttyUSB0 --kernel boot.bin
 
-.PHONY: clean depend load
+.PHONY: clean depend load boot.crc.bin
+
+boot.crc.bin: boot.bin
+	IMAGES_DIR=$(IMAGES_DIR) ./append_crc_len.sh
 
 depend:
 	makedepend -Y -- $(CFLAGS) -- *.c
 
 clean:
-	rm -f $(OBJECTS) boot.elf boot.bin .*~ *~ Makefile.bak
+	rm -f $(OBJECTS) boot.elf boot.bin boot.crc.*.bin .*~ *~ Makefile.bak

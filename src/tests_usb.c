@@ -63,11 +63,11 @@ static int test_keyboard()
 
 struct test_description tests_usb[] = {
 	{
-		.name = "Port A",
+		.name = "USB Port A",
 		.run = test_keyboard
 	},
 	{
-		.name = "Port B",
+		.name = "USB Port B",
 		.run = test_keyboard
 	},
 	{
