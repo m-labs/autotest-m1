@@ -1,6 +1,6 @@
 /*
  * Milkymist One automated testing program
- * Copyright (C) 2010 Sebastien Bourdeauducq
+ * Copyright (C) 2010, 2011 Sebastien Bourdeauducq
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ static int decoder_probe()
 	
 	vin_init();
 	reg = vin_read_reg(0x11);
-	if((reg == 0x11) || (reg == 0x13))
+	if((reg == 0x11) || (reg == 0x13) || (reg == 0x19))
 		return TEST_STATUS_PASSED;
 	else {
 		printf("Unexpected register value: 0x%02x\n", reg);
