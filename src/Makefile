@@ -8,7 +8,9 @@ SEGMENTS= -j .text -j .data -j .rodata
 
 LDFLAGS+= -T linker.ld -N
 LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
-LIBS    = -lbase -lmath -lnet -lhal
+LDLIBS= -lbase -lmath -lnet -lhal
+LIBS=$(MMDIR)/software/libhpdmc/libhpdmc.a $(MMDIR)/software/libbase/libbase.a \
+     $(MMDIR)/software/libhal/libhal.a     $(MMDIR)/software/libnet/libnet.a
 
 CFLAGS+= -DVERSION='"$(GIT_VERSION)$(GIT_STATUS)"'
 
@@ -24,18 +26,26 @@ all: boot.bin
 	$(MAKE) -C $(MMDIR)/tools
 	$(MMDIR)/tools/mkmmimg $@
 
-boot.elf: linker.ld $(OBJECTS)
-	make -C ${MMDIR}/software/libbase
-	make -C ${MMDIR}/software/libmath
-	make -C ${MMDIR}/software/libnet
-	make -C ${MMDIR}/software/libhal
-	$(LD) $(LDFLAGS) $(OBJECTS) -o $@  $(LIBS)
+boot.elf: linker.ld $(OBJECTS) $(LIBS)
+	$(LD) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
 	chmod -x $@
 
 load: boot.bin
 	$(MMDIR)/tools/flterm --port /dev/ttyUSB0 --kernel boot.bin
 
-.PHONY: clean depend load boot.crc.bin
+$(MMDIR)/software/libhpdmc/libhpdmc.a:
+	make -C $(MMDIR)/software/libhpdmc/
+
+$(MMDIR)/software/libbase/libbase.a:
+	make -C $(MMDIR)/software/libbase/
+
+$(MMDIR)/software/libhal/libhal.a:
+	make -C $(MMDIR)/software/libhal/
+
+$(MMDIR)/software/libnet/libnet.a:
+	make -C $(MMDIR)/software/libnet/
+
+.PHONY: clean depend load boot.crc.bin $(LIBS)
 
 boot.crc.bin: boot.bin
 	IMAGES_DIR=$(IMAGES_DIR) ./append_crc_len.sh
