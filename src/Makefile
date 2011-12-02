@@ -31,6 +31,7 @@ boot.elf: linker.ld $(OBJECTS) $(LIBS)
 	chmod -x $@
 
 load: boot.bin
+	make -C $(MMDIR)/tools/
 	$(MMDIR)/tools/flterm --port /dev/ttyUSB0 --kernel boot.bin
 
 $(MMDIR)/software/libhpdmc/libhpdmc.a:
