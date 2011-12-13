@@ -9,8 +9,8 @@ SEGMENTS= -j .text -j .data -j .rodata
 LDFLAGS+= -T linker.ld -N
 LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
 LDLIBS= -lbase -lmath -lnet -lhal
-LIBS=$(MMDIR)/software/libhpdmc/libhpdmc.a $(MMDIR)/software/libbase/libbase.a \
-     $(MMDIR)/software/libhal/libhal.a     $(MMDIR)/software/libnet/libnet.a
+LIBS=$(MMDIR)/software/libbase/libbase.a $(MMDIR)/software/libmath/libmath.a \
+     $(MMDIR)/software/libnet/libnet.a   $(MMDIR)/software/libhal/libhal.a
 
 CFLAGS+= -DVERSION='"$(GIT_VERSION)$(GIT_STATUS)"'
 
@@ -34,9 +34,6 @@ load: boot.bin
 	make -C $(MMDIR)/tools/
 	$(MMDIR)/tools/flterm --port /dev/ttyUSB0 --kernel boot.bin
 
-$(MMDIR)/software/libhpdmc/libhpdmc.a:
-	make -C $(MMDIR)/software/libhpdmc/
-
 $(MMDIR)/software/libbase/libbase.a:
 	make -C $(MMDIR)/software/libbase/
 
@@ -45,6 +42,9 @@ $(MMDIR)/software/libhal/libhal.a:
 
 $(MMDIR)/software/libnet/libnet.a:
 	make -C $(MMDIR)/software/libnet/
+
+$(MMDIR)/software/libmath/libmath.a:
+	make -C $(MMDIR)/software/libmath/
 
 .PHONY: clean depend load boot.crc.bin $(LIBS)
 
