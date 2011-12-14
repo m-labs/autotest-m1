@@ -65,13 +65,10 @@ extern unsigned int _edata;
 static int compare_loop(void)
 {
 	int i, ret, count;
-
 	unsigned int crc, len;
-	unsigned int images[IMAGES_COUNT];
+	unsigned int *crc_addr = &_edata;
 
-	unsigned int * file_end = (unsigned int *) ((unsigned int)&_edata);
-
-	char * images_name[IMAGES_COUNT] = {
+	const char *images_name[IMAGES_COUNT] = {
 		"standby.fpg",
 		"soc-rescue.fpg",
 		"bios-rescue.bin",
@@ -83,15 +80,17 @@ static int compare_loop(void)
 		"flickernoise.fbi"
 	};
 
-	images[0] = FLASH_OFFSET_STANDBY_BITSTREAM;
-	images[1] = FLASH_OFFSET_RESCUE_BITSTREAM;
-	images[2] = FLASH_OFFSET_RESCUE_BIOS;
-	images[3] = FLASH_OFFSET_RESCUE_SPLASH;
-	images[4] = FLASH_OFFSET_RESCUE_APP;
-	images[5] = FLASH_OFFSET_REGULAR_BITSTREAM;
-	images[6] = FLASH_OFFSET_REGULAR_BIOS;
-	images[7] = FLASH_OFFSET_REGULAR_SPLASH;
-	images[8] = FLASH_OFFSET_REGULAR_APP;
+	const unsigned int images_addr[IMAGES_COUNT] = {
+		FLASH_OFFSET_STANDBY_BITSTREAM,
+		FLASH_OFFSET_RESCUE_BITSTREAM,
+		FLASH_OFFSET_RESCUE_BIOS,
+		FLASH_OFFSET_RESCUE_SPLASH,
+		FLASH_OFFSET_RESCUE_APP,
+		FLASH_OFFSET_REGULAR_BITSTREAM,
+		FLASH_OFFSET_REGULAR_BIOS,
+		FLASH_OFFSET_REGULAR_SPLASH,
+		FLASH_OFFSET_REGULAR_APP
+	};
 
 	/*
 	 * images crc and len write at the end of boot.bin
@@ -100,12 +99,12 @@ static int compare_loop(void)
 
 	count = 0;
 	for(i = 0; i < IMAGES_COUNT; i++) {
-		crc = *file_end++;
-		len = *file_end++;
+		crc = *crc_addr++;
+		len = *crc_addr++;
 
 		printf("  %s\t", images_name[i]);
 
-		ret = compare_crc((unsigned int *)images[i], crc, len);
+		ret = compare_crc((unsigned int *)images_addr[i], crc, len);
 		if(ret == TEST_STATUS_FAILED)
 			count++;
 	}
