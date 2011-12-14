@@ -7,9 +7,9 @@ OBJECTS = crt0.o $(COBJS)
 SEGMENTS= -j .text -j .data -j .rodata
 
 LDFLAGS+= -T linker.ld -N
-LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libmath -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
-LDLIBS= -lbase -lmath -lnet -lhal
-LIBS=$(MMDIR)/software/libbase/libbase.a $(MMDIR)/software/libmath/libmath.a \
+LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
+LDLIBS= -lbase -lnet -lhal
+LIBS=$(MMDIR)/software/libbase/libbase.a \
      $(MMDIR)/software/libnet/libnet.a   $(MMDIR)/software/libhal/libhal.a
 
 CFLAGS+= -DVERSION='"$(GIT_VERSION)$(GIT_STATUS)"'
@@ -42,9 +42,6 @@ $(MMDIR)/software/libhal/libhal.a:
 
 $(MMDIR)/software/libnet/libnet.a:
 	make -C $(MMDIR)/software/libnet/
-
-$(MMDIR)/software/libmath/libmath.a:
-	make -C $(MMDIR)/software/libmath/
 
 .PHONY: clean depend load boot.crc.bin $(LIBS)
 

@@ -19,8 +19,8 @@
 #include <hw/ac97.h>
 #include <irq.h>
 #include <stdio.h>
-#include <math.h>
 #include <console.h>
+#include "sincos.h"
 #include "testdefs.h"
 
 static unsigned int snd_ac97_read(unsigned int addr)
