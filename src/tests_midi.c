@@ -22,7 +22,7 @@
 #include <hw/interrupts.h>
 #include "testdefs.h"
 
-static int loopback()
+static int loopback(void)
 {
 	unsigned int c = 0;
 	char e;

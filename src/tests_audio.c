@@ -58,7 +58,7 @@ static int snd_ac97_write(unsigned int addr, unsigned int value)
 	return 1;
 }
 
-static int codecprobe()
+static int codecprobe(void)
 {
 	int reg;
 	
@@ -75,7 +75,7 @@ static int codecprobe()
 	return TEST_STATUS_PASSED;
 }
 
-static int lineout()
+static int lineout(void)
 {
 	unsigned short v;
 	static unsigned short test_tone[2*48000];
@@ -109,7 +109,7 @@ static int lineout()
 	}
 }
 
-static int input_test()
+static int input_test(void)
 {
 	static unsigned short buffer[AC97_MAX_DMASIZE/2];
 	char c;
@@ -141,7 +141,7 @@ static int input_test()
 	}
 }
 
-static int microphone()
+static int microphone(void)
 {
 	int r;
 	if(!snd_ac97_write(0x0e, 0x0000)) return TEST_STATUS_FAILED; /* mic volume */
@@ -152,7 +152,7 @@ static int microphone()
 	return r;
 }
 
-static int linein()
+static int linein(void)
 {
 	int r;
 	if(!snd_ac97_write(0x10, 0x0000)) return TEST_STATUS_FAILED; /* line in volume */

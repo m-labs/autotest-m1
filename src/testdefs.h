@@ -24,7 +24,7 @@ enum {
 	TEST_STATUS_PASSED
 };
 
-typedef int (*testfun)();
+typedef int (*testfun)(void);
 
 struct test_description {
 	char *name;

@@ -21,7 +21,7 @@
 #include <net/microudp.h>
 #include "testdefs.h"
 
-static int mdio()
+static int mdio(void)
 {
 	int r;
 	r = mdio_read(0x01, 0x02);
@@ -33,7 +33,7 @@ static int mdio()
 	}
 }
 
-static int arp_resolution()
+static int arp_resolution(void)
 {
 	microudp_start((unsigned char *)FLASH_OFFSET_MAC_ADDRESS, IPTOINT(192, 168, 0, 42));
 	if(!microudp_arp_resolve(IPTOINT(192, 168, 0, 14)))

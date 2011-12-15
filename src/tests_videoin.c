@@ -24,7 +24,7 @@
 #include <system.h>
 #include "testdefs.h"
 
-static int decoder_probe()
+static int decoder_probe(void)
 {
 	int reg;
 	
@@ -41,7 +41,7 @@ static int decoder_probe()
 /* Must be run after the VGA test to initialize the frambuffer! */
 extern short int fb[];
 static short vbuffer[720*288] __attribute__((aligned(32)));
-static int capture()
+static int capture(void)
 {
 	int x, y;
 	char c;

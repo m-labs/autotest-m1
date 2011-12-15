@@ -69,27 +69,27 @@ static int generic_led(unsigned int l)
 	}
 }
 
-static int sw1()
+static int sw1(void)
 {
 	return generic_sw(GPIO_BTN1);
 }
 
-static int sw2()
+static int sw2(void)
 {
 	return generic_sw(GPIO_BTN2);
 }
 
-static int sw3()
+static int sw3(void)
 {
 	return generic_sw(GPIO_BTN3);
 }
 
-static int led2()
+static int led2(void)
 {
 	return generic_led(GPIO_LED1);
 }
 
-static int led3()
+static int led3(void)
 {
 	return generic_led(GPIO_LED2);
 }

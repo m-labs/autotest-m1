@@ -20,7 +20,7 @@
 #include <hw/sysctl.h>
 #include "testdefs.h"
 
-static int loopback()
+static int loopback(void)
 {
 	unsigned int i;
 	

@@ -22,7 +22,7 @@
 #include <hw/interrupts.h>
 #include "testdefs.h"
 
-static int reception()
+static int reception(void)
 {
 	char c;
 	int pre_rx,i,rx;

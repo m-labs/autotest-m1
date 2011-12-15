@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include "testdefs.h"
 
-static void flush_caches()
+static void flush_caches(void)
 {
 	asm volatile(
 		"wcsr DCC, r0\n"
@@ -28,7 +28,7 @@ static void flush_caches()
 	flush_bridge_cache();
 }
 
-static int a8()
+static int a8(void)
 {
 	unsigned int adr1, adr2;
 	int j;
@@ -62,14 +62,14 @@ static int test_a(unsigned int a)
 	return TEST_STATUS_PASSED;
 }
 
-static int a9() { return test_a(9); }
-static int a10() { return test_a(10); }
-static int a11() { return test_a(11); }
-static int a12() { return test_a(12); }
+static int a9(void) { return test_a(9); }
+static int a10(void) { return test_a(10); }
+static int a11(void) { return test_a(11); }
+static int a12(void) { return test_a(12); }
 
 #define TEST_WORDS (512*1024)
 
-static int random()
+static int random(void)
 {
 	unsigned int test_buffer[TEST_WORDS];
 	int i, j;
@@ -92,7 +92,7 @@ static int random()
 	return TEST_STATUS_PASSED;
 }
 
-static int hammer()
+static int hammer(void)
 {
 	unsigned int test_buffer[TEST_WORDS];
 	int i, j;
@@ -108,7 +108,7 @@ static int hammer()
 	return TEST_STATUS_PASSED;
 }
 
-static int crosstalk()
+static int crosstalk(void)
 {
 	unsigned int test_buffer[TEST_WORDS];
 	int i, j;

@@ -62,7 +62,7 @@ extern unsigned int _edata;
 
 #define IMAGES_COUNT 9
 
-static int compare_loop()
+static int compare_loop(void)
 {
 	int i, ret, count;
 

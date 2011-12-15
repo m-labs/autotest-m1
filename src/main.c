@@ -23,7 +23,7 @@
 #include <console.h>
 #include "testdefs.h"
 
-void isr()
+void isr(void)
 {
 	unsigned int irqs;
 
@@ -191,7 +191,7 @@ static void print_summary(struct test_category *cat)
 		printf("******** THERE WERE SOME SKIPPED TESTS ********\n");
 }
 
-int main()
+int main(void)
 {
 	char c;
 	int i;

@@ -22,7 +22,7 @@
 
 static int i2c_started;
 
-static int i2c_init()
+static int i2c_init(void)
 {
 	unsigned int timeout;
 
@@ -35,7 +35,7 @@ static int i2c_init()
 	return timeout;
 }
 
-static void i2c_delay()
+static void i2c_delay(void)
 {
 	unsigned int i;
 
@@ -43,7 +43,7 @@ static void i2c_delay()
 }
 
 /* I2C bit-banging functions from http://en.wikipedia.org/wiki/I2c */
-static unsigned int i2c_read_bit()
+static unsigned int i2c_read_bit(void)
 {
 	unsigned int bit;
 
@@ -71,7 +71,7 @@ static void i2c_write_bit(unsigned int bit)
 	CSR_VGA_DDC &= ~VGA_DDC_SDC;
 }
 
-static void i2c_start_cond()
+static void i2c_start_cond(void)
 {
 	if(i2c_started) {
 		/* set SDA to 1 */
@@ -87,7 +87,7 @@ static void i2c_start_cond()
 	i2c_started = 1;
 }
 
-static void i2c_stop_cond()
+static void i2c_stop_cond(void)
 {
 	/* set SDA to 0 */
 	CSR_VGA_DDC = VGA_DDC_SDAOE;
@@ -152,7 +152,7 @@ static int vga_read_edid(char *buffer)
 	return 1;
 }
 
-static int ddc()
+static int ddc(void)
 {
 	unsigned int buffer[64];
 
@@ -175,7 +175,7 @@ static int ddc()
 #define MAKERGB565(r, g, b) ((((r) & 0x1f) << RSHIFT) | (((g) & 0x3f) << GSHIFT) | (((b) & 0x1f) << BSHIFT))
 
 short int fb[640*480] __attribute__((aligned(32)));
-static int testcard()
+static int testcard(void)
 {
 	unsigned int x, y;
 	unsigned int r, g, b;

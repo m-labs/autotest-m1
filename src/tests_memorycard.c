@@ -20,7 +20,7 @@
 #include "testdefs.h"
 
 int bd_initialized;
-static int cardinit()
+static int cardinit(void)
 {
 	if(!bd_init(BLOCKDEV_MEMORY_CARD))
 		return TEST_STATUS_FAILED;
@@ -28,7 +28,7 @@ static int cardinit()
 	return TEST_STATUS_PASSED;
 }
 
-static int blkread()
+static int blkread(void)
 {
 	unsigned char buffer[512];
 	unsigned short eos;

@@ -35,7 +35,7 @@ static void mouse_cb(unsigned char buttons, char dx, char dy, unsigned char whee
 		success = 1;
 }
 
-static int test_keyboard()
+static int test_keyboard(void)
 {
 	char c;
 	
