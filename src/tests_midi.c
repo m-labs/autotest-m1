@@ -26,13 +26,13 @@ static int loopback(void)
 {
 	unsigned int c = 0;
 	char e;
+	int timeout;
 	int result = TEST_STATUS_PASSED;
 
-	printf("press 'e' exit MIDI test\n");
-	irq_ack(IRQ_MIDI);
+	printf("Press 'e' to terminate the MIDI test\n");
 	while(1) {
-		if (c == 256) {
-			printf("0 ~ 255 sent out, press 'e' for exit\n");
+		if(c == 256) {
+			printf("Sending 0 ~ 255...\n");
 			c = 0;
 		}
 		CSR_MIDI_RXTX = c;
@@ -44,17 +44,22 @@ static int loopback(void)
 		}
 		CSR_MIDI_STAT = MIDI_STAT_TX_EVT;
 
-
-		if(CSR_MIDI_STAT & MIDI_STAT_RX_EVT) {
-			printf("Failed: RX receive problem\n");
-			result = TEST_STATUS_FAILED;
+		timeout = 10000;
+		while(!(CSR_MIDI_STAT & MIDI_STAT_RX_EVT)) {
+			if(timeout-- == 0) {
+				printf("Test failed: RX timeout\n");
+				result = TEST_STATUS_FAILED;
+				break;
+			}
 		}
-
-		if(CSR_MIDI_RXTX != c) {
-			printf("Failed: TX: %d, but RX: %d\n", c, CSR_MIDI_RXTX);
-			result = TEST_STATUS_FAILED;
+		
+		if(timeout > 0) {
+			if(CSR_MIDI_RXTX != c) {
+				printf("Failed: TX: %d, but RX: %d\n", c, CSR_MIDI_RXTX);
+				result = TEST_STATUS_FAILED;
+			}
+			CSR_MIDI_STAT = MIDI_STAT_RX_EVT;
 		}
-		CSR_MIDI_STAT = MIDI_STAT_RX_EVT;
 		c++;
 	}
 	
