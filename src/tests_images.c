@@ -1,6 +1,6 @@
 /*
  * Milkymist One automated testing program
- * Copyright (C) 2011 Xiangfu Liu
+ * Copyright (C) 2011 Xiangfu Liu <xiangfu@sharism.cc>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,13 @@
 
 #include "testdefs.h"
 
-static int compare_crc(unsigned int *flashbase, unsigned int crc, unsigned int length)
+static int compare_crc(unsigned int *flashbase,
+		       unsigned int crc, unsigned int length)
 {
 	unsigned int got_crc;
 
-	/* Flickernoise have the length and crc at begin, See makefile of Flickernoise */
+	/* Flickernoise have the length and crc at begin,
+	 * See makefile of Flickernoise */
 	if((unsigned int)flashbase == FLASH_OFFSET_RESCUE_APP ||
 	   (unsigned int)flashbase == FLASH_OFFSET_REGULAR_APP) {
 		length = *flashbase++;
@@ -109,12 +111,12 @@ static int compare_loop(void)
 			count++;
 	}
 
-	if(count == 0)
-		return TEST_STATUS_PASSED;
-	else {
+	if(count) {
 		printf("%d images failed\n", count);
 		return TEST_STATUS_FAILED;
 	}
+
+	return TEST_STATUS_PASSED;
 }
 
 struct test_description tests_images[] = {
