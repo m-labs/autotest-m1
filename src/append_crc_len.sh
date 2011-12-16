@@ -7,7 +7,6 @@ CRC_LEN_TMP=`mktemp`
 BOOT_BIN_TMP=`mktemp`
 
 FILENAMES=\
-standby.fpg,\
 soc-rescue.fpg,\
 bios-rescue-without-CRC.bin,\
 splash-rescue.raw,\
@@ -59,14 +58,13 @@ create_crc_len_file() {
 
 cp boot.bin ${BOOT_CRC_BIN}
 
-for (( i=0; i<9; i++ ))
-do
-    if [ -e ${IMAGES_DIR}/${FILES[i]} ]; then
-	create_crc_len_file ${IMAGES_DIR}/${FILES[i]}
+for F in ${FILES[@]}; do
+    if [ -e ${IMAGES_DIR}/${F} ]; then
+	create_crc_len_file ${IMAGES_DIR}/${F}
 	cp -f ${BOOT_CRC_BIN} ${BOOT_BIN_TMP}
 	cat ${BOOT_BIN_TMP} ${CRC_LEN_TMP} > ${BOOT_CRC_BIN}
     else
-	echo "${IMAGES_DIR}/${FILES[i]} not exist, check IMAGES_DIR value"
+	echo "${IMAGES_DIR}/${F} not exist, check IMAGES_DIR value"
 	exit 1
     fi
 done

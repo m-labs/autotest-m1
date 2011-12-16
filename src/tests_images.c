@@ -62,7 +62,7 @@ static int compare_crc(unsigned int *flashbase,
 
 extern unsigned int _edata;
 
-#define IMAGES_COUNT 9
+#define IMAGES_COUNT 8
 
 static int compare_loop(void)
 {
@@ -71,19 +71,17 @@ static int compare_loop(void)
 	unsigned int *crc_addr = &_edata;
 
 	const char *images_name[IMAGES_COUNT] = {
-		"standby.fpg",
 		"soc-rescue.fpg",
 		"bios-rescue.bin",
 		"splash-rescue.raw",
 		"flickernoise.fbi",
-		"soc.fpg",
-		"bios.bin",
-		"splash.raw",
+		"soc.fpg\t",
+		"bios.bin\t",
+		"splash.raw\t",
 		"flickernoise.fbi"
 	};
 
 	const unsigned int images_addr[IMAGES_COUNT] = {
-		FLASH_OFFSET_STANDBY_BITSTREAM,
 		FLASH_OFFSET_RESCUE_BITSTREAM,
 		FLASH_OFFSET_RESCUE_BIOS,
 		FLASH_OFFSET_RESCUE_SPLASH,
