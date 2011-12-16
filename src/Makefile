@@ -8,7 +8,7 @@ SEGMENTS= -j .text -j .data -j .rodata
 
 LDFLAGS+= -T linker.ld -N
 LDFLAGS+= -L$(MMDIR)/software/libbase -L$(MMDIR)/software/libnet -L$(MMDIR)/software/libhal
-LDLIBS= -lbase -lnet -lhal
+LDLIBS= -lnet -lhal -lbase
 LIBS=$(MMDIR)/software/libbase/libbase.a \
      $(MMDIR)/software/libnet/libnet.a   $(MMDIR)/software/libhal/libhal.a
 
