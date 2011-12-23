@@ -29,6 +29,8 @@ static int loopback(void)
 	int timeout;
 	int result = TEST_STATUS_PASSED;
 
+	if(CSR_MIDI_STAT & MIDI_STAT_RX_EVT) CSR_MIDI_STAT = MIDI_STAT_RX_EVT;
+
 	printf("Press 'e' to terminate the MIDI test\n");
 	while(1) {
 		if(c == 256) {
@@ -52,7 +54,7 @@ static int loopback(void)
 				break;
 			}
 		}
-		
+
 		if(timeout > 0) {
 			if(CSR_MIDI_RXTX != c) {
 				printf("Failed: TX: %d, but RX: %d\n", c, CSR_MIDI_RXTX);
@@ -62,7 +64,7 @@ static int loopback(void)
 		}
 		c++;
 	}
-	
+
 	return result;
 }
 
